@@ -1,4 +1,4 @@
-package com.example.algorithm.leetcode;
+package com.example.algorithm.leetcode.medium;
 
 /**
  2.You are given two non-empty linked lists representing two non-negative integers.

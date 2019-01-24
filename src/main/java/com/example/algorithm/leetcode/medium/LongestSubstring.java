@@ -1,4 +1,4 @@
-package com.example.algorithm.leetcode;
+package com.example.algorithm.leetcode.medium;
 
 import java.util.HashMap;
 
@@ -21,31 +21,31 @@ import java.util.HashMap;
 
 //Runtime: 102 ms, faster than 16.05% of Java online submissions for Longest Substring Without Repeating Characters.
 public class LongestSubstring {
+
+    //Runtime: 25 ms, faster than 85.96% of Java online submissions for Longest Substring Without Repeating Characters.
     public static int lengthOfLongestSubstring(String s) {
         char[] chars = s.toCharArray();
-        int index = 0;
         HashMap<Character,Integer> map = new HashMap<>();
         int maxLength = 0;
-        while (index < chars.length) {
+        int start = 0;
+        for (int index = 0; index < chars.length; index++) {
             if(!map.containsKey(chars[index])) {
                 map.put(chars[index], index);
-                if(maxLength < map.size()){
+                if(map.size()>maxLength){
                     maxLength = map.size();
                 }
             }else {
                 int chIndex = map.get(chars[index]);
-                map = new HashMap<>();
-                for (int i = chIndex+1; i <= index; i++) {
-                    map.put(chars[i],i);
+                for (int i = start; i <= chIndex; i++) {
+                    map.remove(chars[i]);
                 }
-                if(maxLength < map.size()){
+                map.put(chars[index],index);
+                start = chIndex+1;
+                if(map.size()>maxLength){
                     maxLength = map.size();
                 }
             }
-            index++;
         }
-
-
         return maxLength;
     }
 //Java solution in 9 lines, beat 98%
@@ -62,7 +62,7 @@ public class LongestSubstring {
         return Math.max(max, s.length()-start);
     }
     public static void main(String[] args) {
-        String s = "abcabcbb";
-        System.out.println(lengthOfLongestSubstring1(s));
+        String s = " ";
+        System.out.println(lengthOfLongestSubstring(s));
     }
 }
