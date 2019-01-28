@@ -1,0 +1,48 @@
+package com.example.algorithm.tree;
+/**
+  一，问题描述
+        任意给定一棵二叉树，判断它是否是平衡二叉树。所谓平衡二叉树，是指二叉树中任意一个结点的左右子树的高度之差不超过1
+  二，思路分析
+        可以分两步实现。第一步先实现求解 二叉树中每个结点的高度的函数height(BinaryNode )；
+        然后先序遍历二叉树中的每一个结点node，调用height()求出该结点的左子树高度height(node.left) 和 右子树高度 height(node.right)。
+        根据左右子树的高度判断是否为平衡二叉树。
+ */
+public class BalanceBinaryTree {
+    static class Node{
+        public int data;
+        public Node left;
+        public Node right;
+
+        public Node(int data) {
+            this.data = data;
+            left = right = null;
+        }
+    }
+    //求解二叉树高度
+    public int getHeight(Node root){
+        if(root == null) return 0;
+        int leftHeight = getHeight(root.left);
+        int rightHeight = getHeight(root.right);
+        return 1+Math.max(leftHeight,rightHeight);
+    }
+    /**
+     * 下面方法是一个典型的“先序遍历”算法。Math.abs方法那一行 相当于先“访问”结点，&&这一行 相当于 再“访问”该结点的左子树，然后再“访问”结点的右子树。
+     但是，时间复杂度比较大。因为，二叉树中的很多结点遍历了多次。
+     比如，求解根的的高度时，需要先求解根的左子树高度和右子树高度，这就遍历了整棵左子树中的结点和右子树中的结点。
+     而求解以根的左孩子为根的子树的高度时，又需要遍历它(根的左孩子)的左子树和右子树。这样，相当于很多结点的高度重复计算了。
+     根本原因是采用了“先序遍历”，求根的高度，需要先知道根的左右孩子的高度。
+     如果采用后序遍历，先知道某结点左右子树的高度，如果左右子树的高度都不满足平衡二叉树(二者高度相减大于1)，那么都不需要再去求解该结点的高度了。
+     因为，平衡二叉树要求二叉树中任意结点的左右子树高度相差不超过1
+        判断二叉树是否平衡
+     */
+    public boolean isBalance(Node root){
+      if(root == null)
+          return true;
+       if(Math.abs(getHeight(root.left) - getHeight(root.right))>1){//abs
+           return false;
+       }else {
+           return isBalance(root.left) && isBalance(root.right);//&&
+       }
+    }
+
+}

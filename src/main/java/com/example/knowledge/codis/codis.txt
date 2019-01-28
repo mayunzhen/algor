@@ -1,0 +1,8 @@
+codis扩容：
+动态迁移场景：
+1、服务slot_1的group原为group 1，codis-config 现发起迁移指令 pre_migrate slot_1 to group 2，将slot_1状态标记为”pre_migrate”；
+2、等待所有的proxy回复收到迁移指令；
+3、将slot_1状态标记为”migrating”，服务slot_1的server group改为group2
+4、codis-config不断发送SLOTSMGRT命令给group1的redis ，直到slot_1所有的key迁移完成；
+5、迁移过程中, 如果请求 slot_1 的 key 数据, proxy 会将请求转发到group2上, proxy会先在group1上强行执行一次 MIGRATE key 将这个键值提前迁移过来. 然后再到group2上正常读取
+6、将slot_1状态标记为”online”

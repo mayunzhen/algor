@@ -19,3 +19,115 @@ super可用于在子类构造器中调用父类的构造器
 4、在构造方法中this()和super()不能同时出现
 
 super没有什么需要解释的地方，我们用代码来看看super具体的一些强大功能吧
+
+示例一、使用super调用基类的属性：
+
+public class Father {
+　　int num=20;
+}
+复制代码
+public class Child extends Father{
+　　int num;
+　　public void print(){
+　　　　num=10;
+　　　　super.num=30;
+　　　　System.out.println("num="+num);
+　　　　System.out.println("super.name="+super.num);
+　　}
+}
+
+public class Test {
+　　public static void main(String[] args) {
+　　Child xm=new Child();
+　　xm.print();
+　　}
+}
+复制代码
+运行结果：
+num=10
+super.name=30
+
+示例二、使用super调用基类中的构造方法
+
+public class Father {
+　　int num;
+　　public Father() {
+　　　　System.out.println("父类中的无参构造方法---");
+　　}
+　　public Father(int num){
+　　　　System.out.println("父类中的有参的构造方法----"+num);
+　　}
+}
+public class Child extends Father{
+　　int num;
+　　public Child() {
+　　　　super(30);
+　　　　System.out.println("子类无参构造方法---");
+　　}
+　　public Child(int num) {
+　　　　this.num = num;
+　　　　System.out.println("子类中的有参的构造方法---"+num);
+　　}
+}
+解释一下上面的这段代码：在Child类中的第一个构造函数里面，super(30);它会去调用父类中嗲有一个int型参数的构造方法。
+在Child类中的第二构造函数里面，虽然没有super关键字出现，但是系统会默认给它一个super();去调用父类中默认的也就是无参的构造方法。
+ 常见错误：（把示例二代码删除父类中的无参构造方法）
+ public class Father {
+ 　　int num;
+ public Father(int num){
+ 　　System.out.println("父类中的有参的构造方法----"+num);
+ 　　}
+ }
+ public class Child extends Father{
+ 　　int num;
+ public Child() {
+ 　　super(30);
+ 　　System.out.println("子类无参构造方法---");
+ }
+ public Child(int num) {
+ 　　this.num = num;　　　　　　　　　　　　　　　　　
+ 　　System.out.println("子类中的有参的构造方法---"+num);
+ 　　}　　
+ }
+ 上面删除线里面的代码的错误：我们知道，在构造方法，无论我们写不写supper(),系统都会给我们一个默认的supper()去调用父类中的无参构造方法。
+ 上面的代码中，我们删除了父类中的无参构造方法，而在子类中的有参构造方法中，系统默认调用父类中的无参构造方法，所以会报错，这里需要注意。
+ 二、this关键字：
+
+ 1.this关键字-用法一：当类中某个非静态方法的参数名跟类的某个成员变量名相同时，为了避免参数的作用范围覆盖了成员变量的作用范围，必须明确地使用this关键字来指定成员变量
+ public class ThisDemo {
+ 　　int a=123;
+ 　　public void show() {
+ 　　　　int a=321;
+ 　　　　System.out.println("a="+a);//321
+ 　　　　System.out.println("this.a="+this.a);//123
+ 　　　　this.a=a;
+ 　　　　System.out.println("赋值后的this.a="+this.a);//321
+ 　　}
+ }
+ public class Test {
+ 　　public static void main(String[] args) {
+ 　　　　ThisDemo h=new ThisDemo();
+ 　　　　h.show();
+ 　　}
+ }解释：由于局部变量优先级高于成员变量，所以第一条输出语句里面的a=321，
+ 第二个输出语句中，this指定了这里的a是成员变量中的a，所以输出成员变量a=123；
+ this.a=a，也就是将局部变量的值赋值给成员。
+2.this关键字-用法二：如果某个构造方法的第一条语句具有形式this(...)，那么这个构造方法将调用本类中的其他构造方法。
+
+public class ThisDemo {
+　　public ThisDemo() {
+　　　　this("shen_hua");
+　　}
+　　public ThisDemo(String name) {
+　　　　//带一个String类型的参数的构造方法
+　　}
+　　public ThisDemo(String name,int age) {
+　　　　//带两个参数的构造方法
+　　}
+}
+解释：在第一个无参的构造方法里面，this（）;包含了一个字符串，所以它会调用本类中形参为一个字符串的构造方法。
+
+3.this关键字除了可以引用变量或者成员方法之外，每个类的非静态方法都会隐含一个this隐含名称，它指向调用这个方法的对象。
+
+4.一些内部类和匿名类，如事件处理。当在匿名类中用this时，这个this则指的是匿名类或内部类本身。这时如果我们要使用外部类的方法和变量的话，则应该加上外部类的类名。
+
