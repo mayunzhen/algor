@@ -7,7 +7,7 @@ import java.util.Random;
 public class BalanceBinaryTree {
     private static Random random = new Random();
 
-    public static class Node {
+    private static class Node {
         public int data;
         public Node left;
         public Node right;
@@ -74,7 +74,7 @@ public class BalanceBinaryTree {
     }
 
     //按层打印二叉树,每行打印一层
-    public void printTree(Node root) {
+    private static void printTree(Node root) {
         if (root == null) return;
         Queue<Node> queue = new LinkedList<>();
         queue.offer(root);

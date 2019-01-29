@@ -1,0 +1,41 @@
+整体思路：二叉查找树是一棵树，对于树，需要把节点表示出来。由于节点仅仅在树的内部使用，故采用内部类的形式实现。
+
+树作为一种ADT，需要属性及在其上进行的操作。由于大部分树的操作都是从根节点开始的，因此需要一个根节点属性，并可根据自己的需求来确定需要实现哪些操作。
+
+对于二叉查找树，它不是一般的二叉树，它具有特点：任一节点的左子树上的节点都比它小，右子树上的节点都比它大。
+因此，二叉查找树的方法实现需要满足这个特点。
+
+操作：
+    1) insert(T ele)，向二叉查找树中插入一个元素。插入元素之后，返回树根节点。
+    private BinaryNode<T> insert(T ele, BinaryNode<T> root){
+            if(root == null)
+                return new BinaryNode<T>(ele);
+            int compareResult = ele.compareTo(root.element);
+            if(compareResult > 0)
+                root.right = insert(ele, root.right);
+            else if(compareResult < 0)
+                root.left = insert(ele, root.left);
+            else
+                ;
+            return root;
+        }
+    2）查找二叉树中元素最大的节点
+      /* 关于尾递归的返回值,该方法只会返回二个值: null 和 'root'
+       * root 是最后一层递归调用时findMax的 root 参数
+       */
+          private BinaryNode<T> findMax(BinaryNode<T> root){
+              if(root == null)
+                  return null;
+              if(root.right == null)
+                  return root;
+              else
+                  return findMax(root.right);
+          }
+    3)先序遍历的递归算法分析
+    public void preOrder(BinaryNode<T> root){
+            if(root == null)
+                return;
+            System.out.print(root.element + " ");
+            preOrder(root.left);
+            preOrder(root.right);
+        }
