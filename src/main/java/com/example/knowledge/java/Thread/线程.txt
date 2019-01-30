@@ -1,0 +1,89 @@
+http://www.cnblogs.com/lwbqqyumidi/p/3804883.html  1,2,3
+
+2、引起Java线程阻塞的主要方法
+    1、join —— 让一个线程等待另一个线程完成才继续执行。
+    如A线程线程执行体中调用B线程的join()方法，则A线程被阻塞，知道B线程执行完为止，A才能得以继续执行。
+    public class ThreadTest {
+
+        public static void main(String[] args) {
+
+            MyRunnable myRunnable = new MyRunnable();
+            Thread thread = new Thread(myRunnable);
+
+            for (int i = 0; i < 100; i++) {
+                System.out.println(Thread.currentThread().getName() + " " + i);
+                if (i == 30) {
+                    thread.start();
+                    try {
+                        thread.join();    // main线程需要等待thread线程执行完后才能继续执行
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+    }
+
+    class MyRunnable implements Runnable {
+
+        @Override
+        public void run() {
+            for (int i = 0; i < 100; i++) {
+                System.out.println(Thread.currentThread().getName() + " " + i);
+            }
+        }
+    }
+    2、sleep()
+      sleep —— 让当前的正在执行的线程暂停指定的时间，并进入阻塞状态。
+      在其睡眠的时间段内，该线程由于不是处于就绪状态，因此不会得到执行的机会。
+      即使此时系统中没有任何其他可执行的线程，出于sleep()中的线程也不会执行。因此sleep()方法常用来暂停线程执行。
+      前面有讲到，当调用了新建的线程的start()方法后，线程进入到就绪状态，可能会在接下来的某个时间获取CPU时间片得以执行，
+      如果希望这个新线程必然性的立即执行，直接调用原来线程的sleep(1)即可。
+        public class ThreadTest {
+
+            public static void main(String[] args) {
+
+                MyRunnable myRunnable = new MyRunnable();
+                Thread thread = new Thread(myRunnable);
+
+                for (int i = 0; i < 100; i++) {
+                    System.out.println(Thread.currentThread().getName() + " " + i);
+                    if (i == 30) {
+                        thread.start();
+                        try {
+                            Thread.sleep(1);   // 使得thread必然能够马上得以执行
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        }
+
+        class MyRunnable implements Runnable {
+
+            @Override
+            public void run() {
+                for (int i = 0; i < 100; i++) {
+                    System.out.println(Thread.currentThread().getName() + " " + i);
+                }
+            }
+        }
+    注：睡一个毫秒级够了，因为CPU不会空闲，会切换到新建的线程。
+    3、后台线程（Daemon Thread）
+    概念/目的：后台线程主要是为其他线程（相对可以称之为前台线程）提供服务，或“守护线程”。如JVM中的垃圾回收线程。
+    调用Thread对象的setDaemon(true)方法可以将指定的线程设置为后台线程。
+    4、改变线程的优先级/setPriority()：
+    设置线程优先级：setPriority(int priorityLevel)。参数priorityLevel范围在1-10之间，常用的有如下三个静态常量值：
+    MAX_PRIORITY:10
+    MIN_PRIORITY:1
+    NORM_PRIORITY:5
+    注：具有较高线程优先级的线程对象仅表示此线程具有较多的执行机会，而非优先执行。
+    5、线程让步：yield()
+    上一篇博文中已经讲到了yield()的基本作用（线程放弃当前cpu，进入就绪队列，不是一定会立马执行），
+    同时，yield()方法还与线程优先级有关，当某个线程调用yiled()方法从运行状态转换到就绪状态后，
+    CPU从就绪状态线程队列中只会选择与该线程优先级相同或优先级更高的线程去执行。
+    Java中让线程进入就绪状态的只有start()和yield()方法。
+    
+
+
