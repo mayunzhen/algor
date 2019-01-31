@@ -13,3 +13,18 @@ AOF持久化配置
     appendfsync always     #每次有数据修改发生时都会写入AOF文件。
     appendfsync everysec  #每秒钟同步一次，该策略为AOF的缺省策略。
     appendfsync no          #从不同步。高效但是数据不会被持久化。
+
+
+    https://www.cnblogs.com/onepixel/articles/7674659.html
+    https://www.cnblogs.com/jingmoxukong/p/4303826.html
+    http://www.cnblogs.com/jingmoxukong/p/7826982.html
+    https://www.cnblogs.com/hongten/category/360189.html
+    https://www.cnblogs.com/hongten/archive/2012/03/05/java_spring.html
+    https://www.cnblogs.com/hapjin/p/5459991.html
+    http://www.cnblogs.com/hapjin/p/5519167.html
+    https://www.cnblogs.com/hapjin/p/5382961.html
+    http://www.cnblogs.com/hapjin/p/5572483.html
+    https://www.cnblogs.com/junyuhuang/p/4544747.html
+    https://www.cnblogs.com/skywang12345/p/3711510.html?utm_source=tuicool
+    http://www.cnblogs.com/skywang12345/p/3603935.html
+    https://blog.csdn.net/Neuf_Soleil/article/details/80962686
