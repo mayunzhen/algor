@@ -1,5 +1,7 @@
 package com.example.algorithm.primaryalgor;
 //http://www.cnblogs.com/hapjin/p/4622681.html
+
+//维护堆性质都是从上往下；
 public class HeapSort {
     public void HeapAdjust(int[] array, int parent, int length) {
         int temp = array[parent]; // temp保存当前父节点
@@ -22,7 +24,7 @@ public class HeapSort {
     }
     public int[] heapSort(int[] list) {
         // 循环建立初始堆
-        for (int i = (list.length) / 2; i >= 0; i--) {
+        for (int i = (list.length-1) / 2; i >= 0; i--) {
             HeapAdjust(list, i, list.length);
         }
         //insert a node to the big heap

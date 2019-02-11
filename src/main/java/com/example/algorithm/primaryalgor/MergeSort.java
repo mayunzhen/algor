@@ -1,11 +1,6 @@
 package com.example.algorithm.primaryalgor;
 
 public class MergeSort {
-    public static int[] mergeSort(int[] arr){
-        int mid = (0+arr.length)/2;
-
-        return arr;
-    }
 
     public static void main(String[] args) {
 //        int[] arr = {9,8,7,6,5,4,3,2,1};
@@ -14,40 +9,44 @@ public class MergeSort {
         for(int num : a){
             System.out.print(num+" ");
         }
+        mergerSort(a);
         System.out.println();
-        for (int i = 0; i < a.length-1; i++) {
-            for (int j = 0; j < a.length-1-i; j++) {
-                if(a[j]>a[j+1]){
-                    int e = a[j+1];
-                    a[j+1] = a[j];
-                    a[j] = e;
-                }
-            }
-        }
         System.out.println("排序后：");
         for(int num : a){
             System.out.print(num+" ");
         }
-        System.out.println();
-
-        //二分查找 8
-        int index = binarySearch(a,8);
-        System.out.println(index);
     }
-    public static int binarySearch(int[] a,int data){
-        int left = 0;
-        int right = a.length-1;
-        while (left <= right){
-            int mid = (left+right)/2;
-            if(a[mid] > data){
-                right = mid+1;
-            }else if(a[mid] < data){
-                left = mid+1;
+    public static void mergerSort(int[] arr){
+        if(arr == null)return;
+        if (arr.length == 0 || arr.length == 1)return;
+        sort(arr,0,arr.length-1);
+    }
+    public static void sort(int[] arr, int low, int high){
+        if (low < high){
+            int mid = (low+high)/2;
+            sort(arr,low,mid);
+            sort(arr,mid+1,high);
+            merge(arr,low,mid,high);
+        }
+    }
+    public static void merge(int[] arr, int low, int mid, int high){
+        int[] temp = new int[high-low+1];
+        int i = low;
+        int j = mid+1;
+        int k = 0;
+        while (i <= mid && j <= high){
+            if(arr[i]<arr[j]){
+                temp[k++] = arr[i++];
             }else {
-                return mid;
+                temp[k++] = arr[j++];
             }
         }
-        return -1;
+        while (i <= mid) temp[k++] = arr[i++];
+        while (j<= high) temp[k++] = arr[j++];
+
+        for (int l = 0; l < temp.length; l++) {
+            arr[low+l] = temp[l];
+        }
     }
 }
 

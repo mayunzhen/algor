@@ -7,6 +7,12 @@ public class SelectSort {
         for(int num:arr){
             System.out.print(num+" ");
         }
+        System.out.println("--");
+        SelectSort(arr);
+        for(int num:arr){
+            System.out.print(num+" ");
+        }
+        System.out.println("--");
         //选择排序的优化
         for (int i = 0; i < arr.length-1; i++) {// 做第i趟排序
             int k = i;
@@ -31,6 +37,21 @@ public class SelectSort {
         System.out.println("交换后：");
         for(int num:arr){
             System.out.print(num+" ");
+        }
+    }
+    public static void SelectSort(int[] arr){
+        for (int i = 0; i <=arr.length-1; i++) {
+            int k = i;
+            for (int j = i; j <=arr.length-1; j++) {
+                if(arr[j] > arr[k]){
+                    k = j;
+                }
+            }
+            if(i!=k){
+                int temp = arr[k];
+                arr[k] =  arr[i];
+                arr[i] = temp;
+            }
         }
     }
 }
