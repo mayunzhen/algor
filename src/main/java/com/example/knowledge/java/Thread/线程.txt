@@ -1,5 +1,7 @@
 http://www.cnblogs.com/lwbqqyumidi/p/3804883.html  1,2,3
 
+https://blog.csdn.net/xiangwanpeng/article/details/54972952
+
 2、引起Java线程阻塞的主要方法
     1、join —— 让一个线程等待另一个线程完成才继续执行。
     如A线程线程执行体中调用B线程的join()方法，则A线程被阻塞，知道B线程执行完为止，A才能得以继续执行。

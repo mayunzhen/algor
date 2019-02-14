@@ -1,0 +1,4 @@
+//
+如果一个对象的指针被多个方法或者线程引用时，那么我们就称这个对象的指针发生了逃逸
+https://blog.csdn.net/lhl1124281072/article/details/80535611
+https://blog.csdn.net/xiaomingdetianxia/article/details/77688945
