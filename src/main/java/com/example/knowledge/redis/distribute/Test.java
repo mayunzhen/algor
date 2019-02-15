@@ -3,6 +3,9 @@ package com.example.knowledge.redis.distribute;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
+import java.util.ArrayList;
+import java.util.List;
+
 class Service {
     private static JedisPool pool = null;
 
@@ -44,11 +47,13 @@ class ThreadA extends Thread{
 }
 
 public class Test {
+    static String  base = "string";
     public static void main(String[] args) {
-        Service service = new Service();
-        for (int i = 0; i < 50; i++) {
-            ThreadA threadA = new ThreadA(service);
-            threadA.start();
+        List<String> list = new ArrayList<String>();
+        for (int i=0;i< Integer.MAX_VALUE;i++){
+            String str = base + base;
+            base = str;
+            list.add(str.intern());
         }
     }
 }
