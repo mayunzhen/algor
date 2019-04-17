@@ -1,0 +1,6 @@
+g++ -g -Wall -std=c++11 main.cpp
+
+您可以使用 typedef 为一个已有的类型取一个新的名字。下面是使用 typedef 定义一个新类型的语法：
+
+typedef int feet;
+feet distance;

@@ -29,4 +29,10 @@ AOF持久化配置
     http://www.cnblogs.com/skywang12345/p/3603935.html
     https://blog.csdn.net/Neuf_Soleil/article/details/80962686
 
+    由dashboard通过ＺＫ向所有proxy下发一个pre_migrate命令，如pre_migrate slot_1 to group 2．
+    当所有proxy都收到并且回复了pre_migrate命令时，标记slot_1的状态为 migrate，服务该slot的server group改为group2, 同时codis-config向group1的redis机器不断发送 SLOTSMGRT 命令, target参数是group2的机器, 直到group1中没有剩余的属于slot_1的key．
+    迁移过程中, 如果客户端请求 slot_1 的 key 数据, proxy 会将请求转发到group2上, proxy会先在group1上强行执行一次 MIGRATE key 将这个键值提前迁移过来. 然后再到group2上正常读取
+    迁移完成, 标记slot_1状态为online
+
+
 

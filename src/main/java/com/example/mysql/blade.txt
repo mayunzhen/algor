@@ -1,0 +1,143 @@
+## 原则：
+- Log不能split成两条，那样就没法保证一致性，但是只要有log记录，无论在哪个region的log中，都可以保证一致性；
+- 为了保证已经告诉用户写完的内容可以被后来的读操作获得，新region响应读要有限制。
+- 各个状态变更，通过Raft协议，形成决议的不会丢失。
+- [x] log  entry里面，带不带tabletid?
+  ==>log entry里面没有tabletid，参见 ReplicateMsg
+-  我们在disable rocksdb的WAL后，raft log即为最近的所有data，故rocksdb未持久化的丢了也没事，可以找回来。
+
+- 每个region的Raft log的apply，都是单线程的，否则没法保证raft的顺序。
+
+
+假设split之前，整个Region为R，split后产生了region R1和R2.
+
+## split的状态含义
+ 状态 |含义 |宕机处理
+--- | --- | ---
+split_pending| split已经发起了，但是所有的I/O仍然在旧region|宕机后，新region可以被放弃
+split_committed| 用户I/O已经分离处理，新region开始接受I/O，split不可撤销，但是新region可能还依赖于旧region的log|宕机后，要保留新region数据
+normal|两个region完全独立，可以做conf change| 已经独立了
+
+
+## 各Region在不同状态下支持的操作
+region | 状态 |读 |写 |conf change
+--- | --- | --- | --- |---
+旧region | split_pending |  R | R |不允许
+旧region | split_committed |  R1 | R1|不允许
+旧region | normal | R1 | R1 |允许
+新region | split_pending | 禁止 |禁止 | 不允许
+新region | split_committed | R2(当split_commit_log被apply后)| R2 |不允许
+新region | normal | R2| R2 |允许
+
+## 需要增加的元数据
+名称| 取值 |含义
+---|---|---|---
+split_status |split_pending/split_committed/normal|split状态
+split_meta |旧region id, 新region的id, 新region的各个peer id, split前后的range, split_start_log_id, split_commit_log_id |split相关描述
+
+通过检查split_status，自身的region与 split_meta中的新旧region id，可以确定自己的角色。是否新region。
+
+## 已有的支撑
+- yugabyte在rocksdb中追加了Frontier，可以获得已经持久化到了那个log id (max_on_disk_log_id) 。
+- Yugabyte DB的 LogAnchor，已有。可以将防止一个log segment(file)被删除。我们需要pin的可能不止一个segment，需要细化怎么用。
+
+## Split基本步骤：
+==要点==： split_commit之前的log，是共用旧region的。
+- [ ] 共享log的问题： 新region的raft没法按照正常方式运行
+==> 新region在split_pending状态，可以让log的写，变成等待旧region的log写完；让读变成旧regin的log读。其他还是raft流程。直到apply了 split_commit log后，变为split_committed，自己写log。
+
+- Start：先执行一个 split_begin RaftRmd，形成共识;
+- 旧region，各个Peer，在apply split_begin log 前，将 split_begin_log_id 及以后的log pin住;设置为split_pending状态。
+- 旧region，在 apply split_begin log后，等待 max_on_disk_log_id >= split_begin_log_id,然后 才建立新Peer;  ==>保证新region +旧region的log，是个完整的数据。
+- 新Region加载(RaftGroup开始运行)：Leader与旧Region 的leader在同一节点(consensus允许指定Peer只做follower)；为split_pending状态。
+
+```
+新region的各个peer异步创建，完成leader election时间可能较长。
+```
+
+- 新Raft group catchup： 由leader在后台，读取旧region的log，走自己的raft流程。
+- 新region，在发现新旧region的current raft lod id小于某个阈值时，触发旧region写入 split_commit RaftCmd;
+- 旧Region在 apply split_commit 后，进入split_committed状态，用户IO开始分离。告知PD split成功，region version 修改（+1），新旧region的信息都汇报给PD。并停止接受旧 region version 的请求。
+- 新Region的leader在apply到split_commit 后，进入split_committed状态，可以接受写了(log开始分离，>= split_commit_log_id的，写到新region的log区)。
+
+```
+此时，新region的leader可能还没apply到 split_commit_log_id，在此之前，读请求需要等待。
+```
+
+- 在新region的 majority个 peer 的 max_on_disk_log_id >= split_commit 后，通知旧Peer，执行split_done RaftCmd，然后进入normal状态，取消pin的log。新region也执行一次 split_done。主要是为了转换状态为normal。而不是为了传输数据。
+
+
+## split对旧region写请求的影响：
+- 在apply split_commit之前，region的version信息不变，不会影响其他写请求的apply
+- split_commit被apply后，version已经改变。后续的请求会发现verion不匹配。返回错误，让client重试 (这点与Tikv相同，apply时做检查)。
+- 由于log记录在旧regiond的log，也不能apply到新region。从split_commit_log_id开始，两个region的log分离了，内容不同。
+
+
+
+# checkpoint
+ 这个实际上是rocksdb本身的功能，代码在rocksdb/utilitis/checkpoint下
+
+# 如果生成了新的region, WAL怎么处理？
+- [ ] 各个Peer的split不同步，Consensus通信肯定会出错。此时若直接让对方建立Peer，而不知道是split引起的新Peer，会有问题。需要知道这个Peer的产生原因最好。
+
+
+## 读过程中，region split了？ 导致数据不对？
+- 在读完成后，如果发现region的version不是请求记录的region version，并且自己的snapid > split_commit_log_id，则需要用户retry。小于split_commit_log_id的，读旧region是安全的。
+
+
+
+## Delete Range的执行：
+- 简单来说，新region进入normal状态后，新旧region都可以执行delete range操作了。
+- 考虑重启，log里面的操作必须是幂等的，这也包括了split操作。
+- 如果删除了旧instance中的部分数据，然后再次split，则会导致新region的没有数据。应该保证所有split前的log都apply到了两个实例，不再需要split时，在metadata中记录split完成，再delete range。 因为delete range这种操作，本身不上用户发起的put/del，幂等操作。
+- “读写操作区分新旧region”，与“旧region做delete range”，在逻辑上独立。Delete range应该晚点做。
+
+- [ ] Region split过程中，leader 宕机了，如何处理？
+- split_commit形成决议之前，可以重新开始(之前clone的废弃)
+- split_commit之后，必须继续使用之前产生的新region(新region可能已经处理过写)。如果新旧region的leader不在一个节点上，那么如何通知其后续改为normal? 模仿client做个远程raftcmd? 应该也可以。
+
+- Leader所在机器彻底故障：==不能依赖于Leader所在位置，只要已经split_comit，必须继续执行==。
+
+
+## TiKV对region version的处理
+
+### Leader 收到 client 的 put 消息后
+- 用户的Request里面，context含有metapb.RegionEpoch;
+- 直到 pre_propose_raft_command 里面的 validate_region 才检查epoch (含version)。
+- Leader端：
+```
+graph TD
+AS(async_raw_put)-->E
+E(exec_requests) --> C(Callcommand)
+C-->N
+N(Notify) --> A
+A(pre_propose_raft_command)-->B(validate_region)
+
+```
+
+### Apply时会再检查一次：
+ApplyDelegate 的 exec_raft_cmd 函数
+1) 先check_epoch
+2）exec_write_cmd
+由于每个region是顺序apply的，所以在这里检查应该就可以了。不存在apply过程中发生epoch变更的情景。因为epoch变更也是一条raft log。 注意，==按照顺序依次apply各个log，是raft的基本要求==，不存在乱序情况。
+
+
+### Raft Peer之间
+- check_msg 函数检查消息的epoch，旧的会返回错误。
+
+### Tikv的读处理
+RawGet和 Get是不同的，但都是快照读。
+RawGet 不做什么检查，直接从本地给结果。会先走一个获取snapshot的流程，snapshot是批量获取的。获取snapshot后，才根据snapshot去读。
+async_raw_get 产生 RawCmd
+storage/txn/scheduler.rs: run()
+   ==>读取RawCmd
+   调用 on_receive_new_cmd  ->self.schedule_command
+   process_read()，这里面实际上是个快照读。
+
+- ==只要保证快照前没有分裂即可==，按照快照读就能拿到正确的数据，所以应该是拿到快照id，再检查epoch。
+
+
+
+
+
+

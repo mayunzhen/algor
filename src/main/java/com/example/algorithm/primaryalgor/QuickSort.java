@@ -21,9 +21,9 @@ public class QuickSort {
                 arr[j] = temp;
             }
         }
-        int temp = arr[i];
-        arr[i] = arr[low];
-        arr[low] = arr[i];
+//        int temp = arr[i];
+//        arr[i] = arr[low];
+//        arr[low] =temp;
         sort(arr,low,i-1);
         sort(arr,i+1,high);
     }
