@@ -10,3 +10,14 @@ https://pan.baidu.com/s/1bpq0yzP#list/path=%2F我的资源%2F传智%2F传智播�
 尚硅谷_Spring注解驱动开发
 链接：https://pan.baidu.com/s/1MLCEf-Boib_aPV2FwgvU1Q
 密码：5g7r
+
+Mac下/usr/local目录默认是对于Finder是隐藏，如果需要到/usr/local下去，打开Finder，然后使用command+shift+G，在弹出的目录中填写/usr/local就可以.
+
+
+E45: 'readonly' option is set (add ! to override)
+解决的办法：
+:w !sudo tee %
+:w – write
+!sudo – call shell sudo command
+tee – the output of write (:w) command is redirected using tee
+% – current file name
