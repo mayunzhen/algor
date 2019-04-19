@@ -1,0 +1,67 @@
+git init
+git config --global user.name "mayunzhen"
+git config --global user.email "632940781@qq.com"
+
+git remote add origin https://github.com/mayunzhen/emm.git
+
+git pull origin master --allow-unrelated-histories
+
+git branch --set-upstream-to=origin/master master
+
+git branch --set-upstream-to=origin/master:master
+git branch --set-upstream-to=origin/master
+git pull --rebase <远程主机名> <远程分支名>:<本地分支名>
+
+1)在本地创建feature/myz1分支，并且追踪远端origin/feature/myz1分支命令：(important)
+git checkout --track origin/feature/myz1
+
+
+
+2)首先在本地创建feature/myz1分支，然后从远端feature/myz1分支拉取代码到本地：(important)
+git checkout -b feature/myz1
+git pull origin feature/myz1
+git push --set-upstream origin feature/myz1
+这样就把本地feature/myz1分支和远端origin/feature/myz1分支代码关联一致了。
+3)(important)
+git checkout -b feature/myz3 origin/feature/myz3
+
+把本地的dev合并到master(在Master分支上操作这个命令)
+git merge dev
+
+克隆版本库的时候，所使用的远程主机自动被Git命名为origin。如果想用其他的主机名，需要用git clone命令的-o选项指定。
+$ git clone -o emm https://github.com/mayunzhen/emm.git
+$ git emm
+emm
+
+
+
+
+1、 mkdir git-operator-test
+2、cd git-operator-test
+3、git init
+4、git config --global user.name 'mayunzhen'
+5、git config --global user.email '632940781@qq.com'
+6、touch 1.cpp
+7、git add 1.cpp
+8、git commit -m 'add 1.cpp'
+9、添加id_rsa.pub内容到github主页的settings中；
+10、git push -u origin master -f （-f是强制的意思）
+11、git checkout -b feature1
+12、git push origin feature1
+13、make a new follder and execute :
+git clone https://github.com/mayunzhen/git-operator-test.git -o booyah
+Then ,execute :git status ,look:
+1) git remote add upstream  https://github.com/mayunzhen/git-operator-test.git
+2)git remote -v
+booyah	https://github.com/mayunzhen/git-operator-test.git (fetch)
+booyah	https://github.com/mayunzhen/git-operator-test.git (push)
+upstream	https://github.com/mayunzhen/git-operator-test.git (fetch)
+upstream	https://github.com/mayunzhen/git-operator-test.git (push)
+Expand:
+# 查看关联的远程仓库的名称
+git remote
+# 查看关联的远程仓库的详细信息
+git remote -v
+# git_url 为你的远程仓库的 url，可采用 http 协议或 ssh（git） 协议
+git remote add origin <url>
+git remote remove <name>
