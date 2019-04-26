@@ -56,6 +56,7 @@ public class LongestPalindromicSubstring {
         }
         return s.substring(low+1,high);
     }
+
     //o(n)
    public static String Manacher(String s){
         String t = "$#";
