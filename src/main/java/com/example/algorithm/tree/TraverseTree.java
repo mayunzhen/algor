@@ -47,11 +47,16 @@ public class TraverseTree {
        if(root == null)return;
        Nodex t = root;
        Stack<Nodex> stack = new Stack<>();
-        while (t != null){
-            System.out.println(t.data);
-            stack.push(t);
-            
-
+        while (t != null || !stack.isEmpty()){
+            while (t != null){
+                System.out.println(t.data);
+                stack.push(t);
+                t = t.left;
+            }
+            while (!stack.isEmpty()){
+                Nodex r = stack.pop();
+                t = r.right;
+            }
         }
    }
    //层次遍历
@@ -77,6 +82,7 @@ public class TraverseTree {
         preTraverse(root);
         System.out.println();
         System.out.println(getTreeHeight(root));
-
+        System.out.println();
+        noRecTraverse(root);
     }
 }
