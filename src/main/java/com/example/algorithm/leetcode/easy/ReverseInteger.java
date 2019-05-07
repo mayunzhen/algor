@@ -28,7 +28,7 @@ public class ReverseInteger {
         return rev;
     }
     public static void main(String[] args) {
-        int number = 123;
+        int number = -123;
         System.out.println(reverse(number));
     }
 }
