@@ -46,9 +46,9 @@ public class FindMedianSortedArrays {
             j++;
             k++;
         }
-        if(N%2 != 0){
+        if(N%2 != 0){//奇数
             res = (double) sums[N/2];
-        }else {
+        }else {//偶数
             res = (double)(sums[N/2]+sums[N/2-1])/(double)2;
         }
         return res;
@@ -73,7 +73,7 @@ public class FindMedianSortedArrays {
         int length1 = end1 - start1 + 1;
         int length2 = end2 - start2 + 1;
         if(length1 > length2){
-            return findKth(array2,start2,end2,array1,start1,end1,k);
+            return findKth(array2, start2, end2, array1, start1, end1, k);
         }
         if(length1 == 0)
             return array2[start2 + k - 1];//由于array1的长度总是小于array2的长度

@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.security.MessageDigest;
+import java.util.HashMap;
 
 public class JsonUtil {
     private static final ObjectMapper MAPPER = new ObjectMapper();
