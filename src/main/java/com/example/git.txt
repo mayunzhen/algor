@@ -15,7 +15,10 @@ git pull --rebase <远程主机名> <远程分支名>:<本地分支名>
 1)在本地创建feature/myz1分支，并且追踪远端origin/feature/myz1分支命令：(important)
 git checkout --track origin/feature/myz1
 
-
+代码打tag步骤：
+   git tag -a 6.0.6 -m 'mobike-redisweb version 6.0.6’
+   git tag
+   git push origin --tags
 
 2)首先在本地创建feature/myz1分支，然后从远端feature/myz1分支拉取代码到本地：(important)
 git checkout -b feature/myz1
