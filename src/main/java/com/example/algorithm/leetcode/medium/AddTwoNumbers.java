@@ -12,12 +12,13 @@ package com.example.algorithm.leetcode.medium;
  */
 
 //  Definition for singly-linked list.
-class ListNode {
-      int val;
-      ListNode next;
-      ListNode(int x) { val = x; }
- }
+
 public class AddTwoNumbers {
+    static class ListNode {
+        int val;
+        ListNode next;
+        ListNode(int x) { val = x; }
+    }
     public static ListNode addTwoNumbers(ListNode l1, ListNode l2) {
         ListNode pre = new ListNode(-1);
         ListNode prev = pre;

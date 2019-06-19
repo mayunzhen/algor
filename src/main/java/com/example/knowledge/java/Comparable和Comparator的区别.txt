@@ -1,3 +1,4 @@
+//https://www.cnblogs.com/xujian2014/p/5215082.html
 Comparable
 
   Comparable可以认为是一个内比较器，实现了Comparable接口的类有一个特点，就是这些类是可以和自己比较的，

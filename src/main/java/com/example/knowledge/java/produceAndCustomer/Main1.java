@@ -3,7 +3,7 @@ package com.example.knowledge.java.produceAndCustomer;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-
+//https://www.cnblogs.com/hongdada/p/6150699.html
 class BoundedBuffer {
     final Lock lock = new ReentrantLock();//锁对象
     final Condition notFull  = lock.newCondition();//写线程条件
