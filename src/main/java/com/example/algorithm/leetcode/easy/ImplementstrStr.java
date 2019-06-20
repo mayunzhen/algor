@@ -5,21 +5,17 @@ public class ImplementstrStr {
 
     //朴素实现方法
     public static int strStr(String haystack, String needle) {
-        if(needle.equals(""))return 0;
-
-        int haylen = haystack.length();
-        int needlen = needle.length();
-
-        if(needlen > haylen)
-            return -1;
-        if(needlen == haylen && haystack.equals(needle))
-            return 0;
-
-        for (int i = 0; i < haystack.length() - needle.length(); i++) {
-            String t = haystack.substring(i,i+needle.length());
-            if(t.equals(needle)){
-                return i;
+        if (needle.isEmpty()) return 0;
+        int m = haystack.length();
+        int n = needle.length();
+        if (n > m) return -1;
+        for (int i = 0; i <= m - n; i++) {
+            int j = 0;
+            for (; j < n; j++) {
+                if (haystack.charAt(i+j) != needle.charAt(j))
+                    break;
             }
+            if (j == n) return i;
         }
         return -1;
     }

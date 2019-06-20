@@ -1,6 +1,6 @@
 git init
 git config --global user.name "mayunzhen"
-git config --global user.email "632940781@qq.com"
+git config --global user.email "xxx@qq.com"
 
 git remote add origin https://github.com/mayunzhen/emm.git
 
@@ -43,7 +43,7 @@ emm
 2、cd git-operator-test
 3、git init
 4、git config --global user.name 'mayunzhen'
-5、git config --global user.email '632940781@qq.com'
+5、git config --global user.email 'xxx@qq.com'
 6、touch 1.cpp
 7、git add 1.cpp
 8、git commit -m 'add 1.cpp'
