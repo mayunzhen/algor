@@ -1,4 +1,53 @@
+1、常用工具
+	everything     本地搜索工具
+	securecrt        linux连接客户端
+	filezilla            文件上传下载工具
+	navicat           数据库客户端
+	postman        http请求工具
+	notepad++ ,sublime   文本编辑器
+	jd-gui              反编译工具
+	beyondcompare           比对工具
+2、maven常用命令
+maven清理指令：
+mvn clean 
+清理项目生产的临时文件,一般是模块下的target目录 
+ 
+maven打包：
+根目录下：
+mvn clean package
+项目打包工具,会在模块下的target目录生成jar或war等文件
+ 
+maven测试：
+mvn test 
+测试命令,或执行src/test/java/下junit的测试用例.
+ 
+把生成的Jar文件放入本地仓库：
+根目录下：
+mvn clean install
+模块安装命令 
+将打包的的jar/war文件复制到你的本地仓库中,供其他模块使用
+ 
+-Dmaven.test.skip=true 
+跳过测试(同时会跳过test compile) 
+ 
+发布命令：
+mvn deploy
+将打包的文件发布到远程
 
-sy学习：
-http://www.verejava.com/?section_id=1699236773261
+3、git常用命令
+4、idea常用快捷键
+https://blog.csdn.net/ysj4428/article/details/82220007
+5、java基础知识
+基础知识
 https://www.sxt.cn/Java_jQuery_in_action/ten-filecharacter-stream.html
+http://www.verejava.com/?section_id=1699236773261
+教学视频
+https://b23.tv/av30023103/p1
+菜鸟教程
+https://www.runoob.com/
+码云开源项目
+https://gitee.com/gvp/all
+多线程
+https://www.cnblogs.com/wenbinshen/p/9727262.html
+6、linux常用命令
+https://www.cnblogs.com/whiggzhaohong/p/5226268.html
